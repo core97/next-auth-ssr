@@ -10,3 +10,5 @@ if (!firebaseAdmin.apps.length) {
     // databaseURL: 'https://myproject-123.firebaseio.com',
   });
 }
+
+export default firebaseAdmin;
