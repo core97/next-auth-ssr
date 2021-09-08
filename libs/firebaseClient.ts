@@ -5,10 +5,15 @@ import {
   setPersistence,
   User,
   browserSessionPersistence,
+  signInWithPopup,
+  GoogleAuthProvider,
 } from 'firebase/auth';
 
 let app = getApps()[0];
 let auth;
+
+const googleProvider = new GoogleAuthProvider();
+
 
 if (typeof window !== 'undefined' && !app) {
   app = initializeApp({
@@ -31,4 +36,8 @@ export function onIdTokenChanged(callback: (user: User | null) => void) {
   onIdTokenChangedFirebase(getAuth(app), async changedUser => {
     callback(changedUser);
   });
+}
+
+export async function signInWithGoogle() {
+  await signInWithPopup(getAuth(app), googleProvider);
 }

@@ -4,13 +4,23 @@ import { AuthProvider } from 'contexts/AuthContext';
 import 'styles/globals.css';
 
 function MyApp({ Component, pageProps }: AppProps) {
+  // return <Component {...pageProps} />;
   return (
     <AuthProvider>
       <Component {...pageProps} />
     </AuthProvider>
   );
-
-  /* return <Component {...pageProps} />; */
 }
+
+/**
+ * TODO:
+ *
+ * - Añadir un metodo de signIn con Google
+ *
+ * - Crear el UserContext (con redireccionamiento 'onAuthState')
+ *   https://kentcdodds.com/blog/authentication-in-react-applications
+ *
+ * - Envolver el 'getServerSideProps' en un HOC para que sea reutilizable
+ */
 
 export default MyApp;
