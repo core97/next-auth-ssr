@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import nookies from 'nookies';
 import firebaseAdmin from 'libs/firebaseAdmin';
+import withAuthRequiredSSR from 'hocs/withAuthRequiredSSR';
 import styles from 'styles/Home.module.css';
 
 const Home: NextPage = () => (
@@ -69,7 +70,11 @@ const Home: NextPage = () => (
 
 export default Home;
 
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+export const getServerSideProps = withAuthRequiredSSR('pepe')(async () => ({
+  props: {},
+}));
+
+/* export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   try {
     const cookies = nookies.get(ctx);
     const token = await firebaseAdmin.auth().verifyIdToken(cookies.token);
@@ -85,10 +90,11 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     ctx.res.writeHead(302, { Location: '/login' });
     ctx.res.end();
 
-    /**
+    *
      * as never` evita problemas de inferencia con InferGetServerSidePropsType.
      * Las props devueltas aquí no importan porque ya hemos redirigido
-     */
+    
     return { props: {} as never };
   }
 };
+ */
