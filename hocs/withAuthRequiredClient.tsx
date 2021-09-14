@@ -1,27 +1,32 @@
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { Component } from 'react';
-import { User, AuthProvider } from 'contexts/AuthContext';
+import { Component, useState } from 'react';
+import { UserContext } from 'contexts/UserContext';
+import { User } from 'types/bussines';
 
 type Props = User & Record<string, any>;
 
 const withAuthRequiredClient = (WrappedComponent: NextPage) => {
   const WithAuthUser = (props: Props) => {
+    const [user, setUser] = useState<User | undefined>(undefined);
+    const router = useRouter();
     const ChildComponent = WrappedComponent as typeof Component;
-    /**
-     * TODO:
-     * - Si viene el usuario desde las props => meterlo en el contexto en caso de
-     * el estado del contexto sea nulo
-     *
-     * - Si NO viene el usuario desde las props y el estado del contexto es nulo,
-     * se debe de redirigir al /login
-     */
-    console.log('--- props ---');
-    console.log(props);
+
+    if (!props.user) {
+      if (typeof window !== undefined) router.push('/login');
+    }
+
     return (
-      <AuthProvider>
+      <UserContext.Provider
+        value={{
+          user: user || { uid: props.user.uid, email: props.user.email },
+          onChangeUser: (uid: string, email: string) => {
+            setUser({ uid, email });
+          },
+        }}
+      >
         <ChildComponent {...props} />
-      </AuthProvider>
+      </UserContext.Provider>
     );
   };
 

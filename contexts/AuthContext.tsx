@@ -1,37 +1,29 @@
-import { useState, useEffect, useContext, createContext } from 'react';
-import { getAuth } from 'firebase/auth';
+import { useContext, useState, useEffect, createContext } from 'react';
 import nookies from 'nookies';
+import { getAuth } from 'firebase/auth';
 import { onIdTokenChanged } from 'libs/firebaseClient';
 
-export interface User {
-  uid: string;
-  email: string;
-}
-
-const AuthContext = createContext<{
-  user: User | null;
-  setUser: (uid: string, email: string) => void;
+export const AuthContext = createContext<{
+  isAuth: Boolean | undefined;
 }>({
-  user: null,
-  setUser: () => {},
+  isAuth: undefined,
 });
 
-export function AuthProvider({ children }: any) {
-  const [user, setUser] = useState<User | null>(null);
-
-  const handleOnChangeUser = (uid: string, email: string) => {
-    setUser({ uid, email });
-  };
+export function AuthContextProvider({
+  children,
+}: {
+  children: React.ReactNode | Array<React.ReactNode>;
+}) {
+  const [isAuth, setIsAuth] = useState<Boolean | undefined>(undefined);
 
   useEffect(() => {
     onIdTokenChanged(async changedUser => {
       if (!changedUser) {
-        setUser(null);
         nookies.set(undefined, 'token', '', { path: '/' });
+        setIsAuth(false);
       } else {
         const token = await changedUser.getIdToken();
-        const { email, uid} = changedUser;
-        email && setUser({ email, uid });
+        setIsAuth(true);
         /**
          * Todas las solicitudes API como la navegación de páginas
          * contendrá el token de identificación del usuario como una cookie
@@ -61,9 +53,7 @@ export function AuthProvider({ children }: any) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, setUser: handleOnChangeUser }}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={{ isAuth }}>{children}</AuthContext.Provider>
   );
 }
 
@@ -71,7 +61,7 @@ export default function useAuth() {
   const context = useContext(AuthContext);
 
   if (context === undefined) {
-    throw new Error('useAuth must be used within a UserProvider');
+    throw new Error('useUAuth must be used with a AuthProvider');
   }
 
   return context;
