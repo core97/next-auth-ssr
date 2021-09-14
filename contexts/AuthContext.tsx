@@ -1,14 +1,27 @@
 import { useState, useEffect, useContext, createContext } from 'react';
-import { User, getAuth } from 'firebase/auth';
+import { getAuth } from 'firebase/auth';
 import nookies from 'nookies';
 import { onIdTokenChanged } from 'libs/firebaseClient';
 
-const AuthContext = createContext<{ user: User | null }>({
+export interface User {
+  uid: string;
+  email: string;
+}
+
+const AuthContext = createContext<{
+  user: User | null;
+  setUser: (uid: string, email: string) => void;
+}>({
   user: null,
+  setUser: () => {},
 });
 
 export function AuthProvider({ children }: any) {
   const [user, setUser] = useState<User | null>(null);
+
+  const handleOnChangeUser = (uid: string, email: string) => {
+    setUser({ uid, email });
+  };
 
   useEffect(() => {
     onIdTokenChanged(async changedUser => {
@@ -17,7 +30,8 @@ export function AuthProvider({ children }: any) {
         nookies.set(undefined, 'token', '', { path: '/' });
       } else {
         const token = await changedUser.getIdToken();
-        setUser(changedUser);
+        const { email, uid} = changedUser;
+        email && setUser({ email, uid });
         /**
          * Todas las solicitudes API como la navegación de páginas
          * contendrá el token de identificación del usuario como una cookie
@@ -47,7 +61,9 @@ export function AuthProvider({ children }: any) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ user, setUser: handleOnChangeUser }}>
+      {children}
+    </AuthContext.Provider>
   );
 }
 

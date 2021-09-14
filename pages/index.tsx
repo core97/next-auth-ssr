@@ -2,6 +2,7 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import withAuthRequiredSSR from 'hocs/withAuthRequiredSSR';
+import withAuthRequiredClient from 'hocs/withAuthRequiredClient';
 import styles from 'styles/Home.module.css';
 
 const Home: NextPage = () => (
@@ -66,10 +67,6 @@ const Home: NextPage = () => (
   </div>
 );
 
-export default Home;
+export default withAuthRequiredClient(Home);
 
-export const getServerSideProps = withAuthRequiredSSR()(async (ctx) => {
-  console.log('--- desde el componente ---');
-  console.log(ctx.user);
-  return { props : {}};
-});
+export const getServerSideProps = withAuthRequiredSSR()();

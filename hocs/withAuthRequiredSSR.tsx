@@ -1,4 +1,4 @@
-import { GetServerSideProps, GetServerSidePropsContext } from 'next';
+import { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import nookies from 'nookies';
 import firebaseAdmin from 'libs/firebaseAdmin';
 
@@ -14,21 +14,25 @@ const withAuthRequiredSSR =
 
       const { uid, email } = token;
 
+      let returnData = { props: { user: { uid, email } } };
+
       if (getServerSidePropsFunc) {
-        ctx.user = { uid, email };
-        
         const composedProps = (await getServerSidePropsFunc(ctx)) || {};
 
-        if (composedProps.props) {
-          returnedData = { ...composedProps };
-        } else if (composedProps.notFound || composedProps.redirect) {
-          /**
-           * Si 'composedProps' devuelve una clave de 'notFound' o 'redirect'
-           * https://nextjs.org/docs/basic-features/data-fetching#getserversideprops-server-side-rendering
-           */
-          ctx.res.writeHead(302, { Location: '/login' });
+        if (composedProps) {
+          if (composedProps.props) {
+            returnData = { ...composedProps };
+          } else if (composedProps.notFound || composedProps.redirect) {
+            /**
+             * Si 'composedProps' devuelve una clave de 'notFound' o 'redirect'
+             * https://nextjs.org/docs/basic-features/data-fetching#getserversideprops-server-side-rendering
+             */
+            ctx.res.writeHead(302, { Location: '/login' });
+          }
         }
       }
+
+      return returnData;
     } catch (error) {
       // el 'token' NO existe o la verificación de token ha fallado
       ctx.res.writeHead(302, { Location: '/login' });
