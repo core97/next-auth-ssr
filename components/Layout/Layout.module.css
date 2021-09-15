@@ -1,0 +1,36 @@
+.navbar {
+  padding: 1rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar button {
+  margin-top: 1rem;
+}
+
+.navItems {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+}
+
+@media (min-width: 600px) {
+  .navbar {
+    flex-direction: row;
+  }
+
+  .navbar a {
+    margin-right: 2rem;
+  }
+
+  .navbar button {
+    margin-top: 0rem;
+  }
+
+  .navItems {
+    justify-content: flex-start;
+  }
+}
