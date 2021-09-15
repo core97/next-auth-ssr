@@ -1,8 +1,4 @@
-import {
-  GetServerSideProps,
-  GetServerSidePropsContext,
-  GetServerSidePropsResult,
-} from 'next';
+import { GetServerSideProps, GetServerSidePropsContext } from 'next';
 import nookies from 'nookies';
 import firebaseAdmin from 'libs/firebaseAdmin';
 
