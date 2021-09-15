@@ -1,12 +1,17 @@
 import { useContext, useState, useEffect, createContext } from 'react';
-import nookies from 'nookies';
+import nookies, { destroyCookie, parseCookies } from 'nookies';
 import { getAuth } from 'firebase/auth';
 import { onIdTokenChanged } from 'libs/firebaseClient';
+import { User } from 'types/bussines';
 
 export const AuthContext = createContext<{
   isAuth: Boolean | undefined;
+  userAuth: User | undefined;
+  onChangeUserAuth: (uid: string, email: string) => void;
 }>({
   isAuth: undefined,
+  userAuth: undefined,
+  onChangeUserAuth: () => {},
 });
 
 export function AuthContextProvider({
@@ -14,6 +19,7 @@ export function AuthContextProvider({
 }: {
   children: React.ReactNode | Array<React.ReactNode>;
 }) {
+  const [userAuth, setUserAuth] = useState<User | undefined>(undefined);
   const [isAuth, setIsAuth] = useState<Boolean | undefined>(undefined);
 
   useEffect(() => {
@@ -52,8 +58,22 @@ export function AuthContextProvider({
     return () => clearInterval(handle);
   }, []);
 
+  useEffect(() => {
+    nookies.set(undefined, 'hasUser', JSON.stringify(!!userAuth));
+  }, [userAuth]);
+
   return (
-    <AuthContext.Provider value={{ isAuth }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider
+      value={{
+        userAuth,
+        isAuth,
+        onChangeUserAuth: (uid: string, email: string) => {
+          setUserAuth({ uid, email });
+        },
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
   );
 }
 

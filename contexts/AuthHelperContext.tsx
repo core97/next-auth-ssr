@@ -1,7 +1,7 @@
 import { useContext, createContext } from 'react';
 import { User } from 'types/bussines';
 
-export const UserContext = createContext<{
+export const AuthHelperContext = createContext<{
   user: User | undefined;
   onChangeUser: (uid: string, email: string) => void;
 }>({
@@ -10,7 +10,7 @@ export const UserContext = createContext<{
 });
 
 export default function useUser() {
-  const context = useContext(UserContext);
+  const context = useContext(AuthHelperContext);
 
   if (context === undefined) {
     throw new Error(
