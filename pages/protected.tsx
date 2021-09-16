@@ -1,15 +1,16 @@
 import type { NextPage } from 'next';
 import withAuthRequiredSSR from 'hocs/withAuthRequiredSSR';
-import withAuthRequiredClient from 'hocs/withAuthRequiredClient';
+import withUser from 'hocs/withUser';
+import Layout from 'components/Layout';
 
 const ProtectedPage: NextPage = () => (
-  <div>
-    <h1>
-      Enhorabuena 🎉🎉 estás autenticado
-    </h1>
-  </div>
+  <Layout>
+    <div>
+      <h1>Enhorabuena 🎉🎉 estás autenticado</h1>
+    </div>
+  </Layout>
 );
 
-export default withAuthRequiredClient(ProtectedPage);
+export default withUser(ProtectedPage);
 
 export const getServerSideProps = withAuthRequiredSSR()();

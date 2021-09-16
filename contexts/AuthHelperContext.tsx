@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect, createContext } from 'react';
-import nookies, { destroyCookie, parseCookies } from 'nookies';
+import nookies from 'nookies';
 import { getAuth } from 'firebase/auth';
 import { onIdTokenChanged } from 'libs/firebaseClient';
 import { User } from 'types/bussines';
@@ -7,11 +7,13 @@ import { User } from 'types/bussines';
 export const AuthHelperContext = createContext<{
   isAuth: Boolean | undefined;
   userAuth: User | undefined;
-  onChangeUserAuth: (uid: string, email: string) => void;
+  onChangeUser: (uid: string, email: string) => void;
+  onResetUser: () => void;
 }>({
   isAuth: undefined,
   userAuth: undefined,
-  onChangeUserAuth: () => {},
+  onChangeUser: () => {},
+  onResetUser: () => {},
 });
 
 export function AuthHelperContextProvider({
@@ -67,8 +69,11 @@ export function AuthHelperContextProvider({
       value={{
         userAuth,
         isAuth,
-        onChangeUserAuth: (uid: string, email: string) => {
+        onChangeUser: (uid: string, email: string) => {
           setUserAuth({ uid, email });
+        },
+        onResetUser: () => {
+          setUserAuth(undefined);
         },
       }}
     >
@@ -81,7 +86,9 @@ export function useAuthHelper() {
   const context = useContext(AuthHelperContext);
 
   if (context === undefined) {
-    throw new Error('useAuthHelper must be used with a AuthHelperContextProvider');
+    throw new Error(
+      'useAuthHelper must be used with a AuthHelperContextProvider'
+    );
   }
 
   return context;

@@ -1,12 +1,16 @@
 import type { NextPage } from 'next';
+import Layout from 'components/Layout';
+import withUser from 'hocs/withUser';
 
 const HomePage: NextPage = () => (
-  <div>
-    <h1>
-      Next.js Auth SSR
-      <br /> with 🔥Firebase
-    </h1>
-  </div>
+  <Layout>
+    <div>
+      <h1>
+        Next.js Auth SSR
+        <br /> with 🔥Firebase
+      </h1>
+    </div>
+  </Layout>
 );
 
-export default HomePage;
+export default withUser(HomePage);

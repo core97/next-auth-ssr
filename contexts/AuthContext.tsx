@@ -4,9 +4,11 @@ import { User } from 'types/bussines';
 export const AuthContext = createContext<{
   user: User | undefined;
   onChangeUser: (uid: string, email: string) => void;
+  onResetUser: () => void;
 }>({
   user: undefined,
   onChangeUser: () => {},
+  onResetUser: () => {},
 });
 
 export function useAuth() {
