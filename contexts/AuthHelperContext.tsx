@@ -1,37 +1,56 @@
+import { useRouter } from 'next/router';
 import { useContext, useState, useEffect, createContext } from 'react';
 import nookies from 'nookies';
 import { getAuth } from 'firebase/auth';
-import { onIdTokenChanged } from 'libs/firebaseClient';
+import {
+  onIdTokenChanged,
+  signOut,
+  signInWithGoogle,
+} from 'libs/firebaseClient';
 import { User } from 'types/bussines';
+import { AuthContextValues } from 'types/app';
 
-export const AuthHelperContext = createContext<{
-  isAuth: Boolean | undefined;
-  userAuth: User | undefined;
-  onChangeUser: (uid: string, email: string) => void;
-  onResetUser: () => void;
-}>({
-  isAuth: undefined,
-  userAuth: undefined,
+export const authContextDefaultValues = {
+  user: undefined,
   onChangeUser: () => {},
-  onResetUser: () => {},
-});
+  onSignIn: () => {},
+  onSignOut: () => {},
+};
+
+export const AuthHelperContext = createContext<AuthContextValues>(
+  authContextDefaultValues
+);
 
 export function AuthHelperContextProvider({
   children,
 }: {
   children: React.ReactNode | Array<React.ReactNode>;
 }) {
-  const [userAuth, setUserAuth] = useState<User | undefined>(undefined);
-  const [isAuth, setIsAuth] = useState<Boolean | undefined>(undefined);
+  const [user, setUser] = useState<User | undefined>(undefined);
+  const router = useRouter();
+
+  const handleOnChangeUser = (uid: string, email: string) => {
+    setUser({ uid, email });
+  };
+
+  const handleOnSignIn = async () => {
+    const { uid, email } = await signInWithGoogle();
+    handleOnChangeUser(uid, email);
+    router.push('/');
+  };
+
+  const handleOnSignOut = async () => {
+    await signOut();
+    setUser(undefined);
+    router.push('/');
+  };
 
   useEffect(() => {
     onIdTokenChanged(async changedUser => {
       if (!changedUser) {
         nookies.set(undefined, 'token', '', { path: '/' });
-        setIsAuth(false);
       } else {
         const token = await changedUser.getIdToken();
-        setIsAuth(true);
         /**
          * Todas las solicitudes API como la navegación de páginas
          * contendrá el token de identificación del usuario como una cookie
@@ -61,20 +80,16 @@ export function AuthHelperContextProvider({
   }, []);
 
   useEffect(() => {
-    nookies.set(undefined, 'hasUser', JSON.stringify(!!userAuth));
-  }, [userAuth]);
+    nookies.set(undefined, 'hasUser', JSON.stringify(!!user));
+  }, [user]);
 
   return (
     <AuthHelperContext.Provider
       value={{
-        userAuth,
-        isAuth,
-        onChangeUser: (uid: string, email: string) => {
-          setUserAuth({ uid, email });
-        },
-        onResetUser: () => {
-          setUserAuth(undefined);
-        },
+        user,
+        onChangeUser: handleOnChangeUser,
+        onSignIn: handleOnSignIn,
+        onSignOut: handleOnSignOut,
       }}
     >
       {children}

@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import { NextPage } from 'next';
 import { Component, useEffect } from 'react';
 import { AuthContext } from 'contexts/AuthContext';
@@ -7,23 +8,23 @@ import { User } from 'types/bussines';
 type Props = { user: User } & Record<string, any>;
 
 const withUser = (WrappedComponent: NextPage) => {
-  const WithAuthUser = (props: Props) => {
-    const { userAuth, onChangeUser, onResetUser } = useAuthHelper();
+  const WithUserComponent = (props: Props) => {
+    const authHelper = useAuthHelper();
+    const { onChangeUser } = authHelper;
     const ChildComponent = WrappedComponent as typeof Component;
+    const { user } = props;
 
     useEffect(() => {
-      if (props.user) {
-        const { user } = props;
+      if (user) {
         onChangeUser(user.uid, user.email);
       }
-    }, [props]);
+    }, [user]);
 
     return (
       <AuthContext.Provider
         value={{
-          user: userAuth || props.user ? { ...props.user } : undefined,
-          onChangeUser,
-          onResetUser,
+          ...authHelper,
+          user: authHelper.user || user ? { ...user } : undefined,
         }}
       >
         <ChildComponent {...props} />
@@ -31,7 +32,7 @@ const withUser = (WrappedComponent: NextPage) => {
     );
   };
 
-  return WithAuthUser;
+  return WithUserComponent;
 };
 
 export default withUser;

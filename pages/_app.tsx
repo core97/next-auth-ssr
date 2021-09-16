@@ -15,5 +15,7 @@ export default MyApp;
 
 /**
  * TODO:
- * - Redireccion cuando hace login (onAuthStateChange) y obtenemos los detalles del usuario a '/'
+ * - crear constants/config con una variable de las rutas
+ * 
+ * - revisar eslint y prettier
  */

@@ -1,22 +1,17 @@
 import { useContext, createContext } from 'react';
-import { User } from 'types/bussines';
+import { authContextDefaultValues } from 'contexts/AuthHelperContext';
+import { AuthContextValues } from 'types/app';
 
-export const AuthContext = createContext<{
-  user: User | undefined;
-  onChangeUser: (uid: string, email: string) => void;
-  onResetUser: () => void;
-}>({
-  user: undefined,
-  onChangeUser: () => {},
-  onResetUser: () => {},
-});
+export const AuthContext = createContext<AuthContextValues>(
+  authContextDefaultValues
+);
 
 export function useAuth() {
   const context = useContext(AuthContext);
 
   if (context === undefined) {
     throw new Error(
-      'useAuth must be used with a AuthContextProvider. You should wrap the component in "withAuthRequiredClient" hoc.'
+      'useAuth must be used with a AuthContextProvider. You should wrap the component in "withUser" hoc.'
     );
   }
 

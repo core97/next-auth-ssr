@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { signOut } from 'libs/firebaseClient';
 import { useAuth } from 'contexts/AuthContext';
 import styles from './Layout.module.css';
 
@@ -10,13 +9,7 @@ type Props = {
 
 const Layout = ({ children }: Props) => {
   const router = useRouter();
-  const { user, onResetUser } = useAuth();
-
-  const handleOnSignOut = async () => {
-    await signOut();
-    onResetUser();
-    router.push('/');
-  };
+  const { user, onSignOut } = useAuth();
 
   return (
     <div>
@@ -27,7 +20,7 @@ const Layout = ({ children }: Props) => {
         </div>
         <div>
           {user ? (
-            <button type="button" onClick={handleOnSignOut}>
+            <button type="button" onClick={onSignOut}>
               Cerrar sesión
             </button>
           ) : (
