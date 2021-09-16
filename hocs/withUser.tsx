@@ -3,28 +3,26 @@ import { NextPage } from 'next';
 import { Component, useEffect } from 'react';
 import { AuthContext } from 'contexts/AuthContext';
 import { useAuthHelper } from 'contexts/AuthHelperContext';
-import { User } from 'types/bussines';
-
-type Props = { user: User } & Record<string, any>;
+import { AuthRequiredPropsSSR } from 'hocs/withAuthRequiredSSR';
 
 const withUser = (WrappedComponent: NextPage) => {
-  const WithUserComponent = (props: Props) => {
+  const WithUserComponent = (props: AuthRequiredPropsSSR) => {
     const authHelper = useAuthHelper();
     const { onChangeUser } = authHelper;
     const ChildComponent = WrappedComponent as typeof Component;
-    const { user } = props;
+    const { userFromSSR } = props;
 
     useEffect(() => {
-      if (user) {
-        onChangeUser(user.uid, user.email);
+      if (userFromSSR) {
+        onChangeUser(userFromSSR.uid, userFromSSR.email);
       }
-    }, [user]);
+    }, [onChangeUser, userFromSSR]);
 
     return (
       <AuthContext.Provider
         value={{
           ...authHelper,
-          user: authHelper.user || user ? { ...user } : undefined,
+          user: authHelper.user || userFromSSR || undefined,
         }}
       >
         <ChildComponent {...props} />
