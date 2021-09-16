@@ -1,13 +1,13 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import type { AppProps } from 'next/app';
-import { AuthContextProvider } from 'contexts/AuthContext';
+import { AuthHelperContextProvider } from 'contexts/AuthHelperContext';
 import 'styles/globals.css';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <AuthContextProvider>
+    <AuthHelperContextProvider>
       <Component {...pageProps} />
-    </AuthContextProvider>
+    </AuthHelperContextProvider>
   );
 }
 

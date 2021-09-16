@@ -1,13 +1,20 @@
 import type { NextPage } from 'next';
-import Link from 'next/link';
-import { signInWithGoogle } from 'libs/firebaseClient';
+import Layout from 'components/Layout';
+import withUser from 'hocs/withUser';
+import { useAuth } from 'contexts/AuthContext';
 
-const Login: NextPage = () => (
-  <div>
-    <h1>Login</h1>
-    <Link href="/">Ir a la home</Link>
-    <button type="button" onClick={signInWithGoogle}>Loguearse con google</button>
-  </div>
-);
+const LoginPage: NextPage = () => {
+  const { onSignIn } = useAuth();
 
-export default Login;
+  return (
+    <Layout>
+      <div>
+        <button type="button" onClick={onSignIn}>
+          Loguearse con Google
+        </button>
+      </div>
+    </Layout>
+  );
+};
+
+export default withUser(LoginPage);

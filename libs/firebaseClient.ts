@@ -1,12 +1,13 @@
 import { initializeApp, getApps } from 'firebase/app';
 import {
   getAuth,
-  onIdTokenChanged as onIdTokenChangedFirebase,
   setPersistence,
   User,
   browserSessionPersistence,
   signInWithPopup,
   GoogleAuthProvider,
+  onIdTokenChanged as onIdTokenChangedFirebase,
+  signOut as signOutFirebase,
 } from 'firebase/auth';
 
 let app = getApps()[0];
@@ -37,5 +38,14 @@ export function onIdTokenChanged(callback: (user: User | null) => void) {
 }
 
 export async function signInWithGoogle() {
-  await signInWithPopup(getAuth(app), googleProvider);
+  const { user } = await signInWithPopup(getAuth(app), googleProvider);
+  if (!user.email) {
+    throw Error('When logging in, the user must have an email');
+  }
+
+  return { email: user.email, uid: user.uid };
+}
+
+export async function signOut() {
+  await signOutFirebase(getAuth(app));
 }
