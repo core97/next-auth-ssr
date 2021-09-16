@@ -12,10 +12,3 @@ function MyApp({ Component, pageProps }: AppProps) {
 }
 
 export default MyApp;
-
-/**
- * TODO:
- * - crear constants/config con una variable de las rutas
- * 
- * - revisar eslint y prettier
- */

@@ -42,13 +42,13 @@ export function AuthHelperContextProvider({
   const handleOnSignIn = useCallback(async () => {
     const { uid, email } = await signInWithGoogle();
     handleOnChangeUser(uid, email);
-    router.push('/');
+    router.push(process.env.NEXT_PUBLIC_APP_PAGE_URL);
   }, [handleOnChangeUser, router]);
 
   const handleOnSignOut = useCallback(async () => {
     await signOut();
     setUser(undefined);
-    router.push('/');
+    router.push(process.env.NEXT_PUBLIC_APP_PAGE_URL);
   }, [router]);
 
   useEffect(() => {

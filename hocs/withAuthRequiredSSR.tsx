@@ -40,7 +40,9 @@ const withAuthRequiredSSR =
              * Si 'composedProps' devuelve una clave de 'notFound' o 'redirect'
              * https://nextjs.org/docs/basic-features/data-fetching#getserversideprops-server-side-rendering
              */
-             ctx.res.writeHead(302, { Location: '/login' });
+            ctx.res.writeHead(302, {
+              Location: process.env.NEXT_PUBLIC_LOGIN_PAGE_URL,
+            });
           }
         }
       }
@@ -50,8 +52,10 @@ const withAuthRequiredSSR =
       /**
        * el 'token' NO existe o la verificación de token ha fallado
        */
-       ctx.res.writeHead(302, { Location: '/login' });
-       ctx.res.end();
+      ctx.res.writeHead(302, {
+        Location: process.env.NEXT_PUBLIC_LOGIN_PAGE_URL,
+      });
+      ctx.res.end();
     }
 
     return returnedData;

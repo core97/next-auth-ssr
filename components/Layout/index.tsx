@@ -24,7 +24,12 @@ const Layout = ({ children }: Props) => {
               Cerrar sesión
             </button>
           ) : (
-            <button type="button" onClick={() => router.push('/login')}>
+            <button
+              type="button"
+              onClick={() =>
+                router.push(process.env.NEXT_PUBLIC_LOGIN_PAGE_URL)
+              }
+            >
               Iniciar sesión
             </button>
           )}
