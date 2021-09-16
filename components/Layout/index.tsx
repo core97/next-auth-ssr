@@ -1,15 +1,15 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useAuth } from 'contexts/AuthContext';
 import styles from './Layout.module.css';
 
 type Props = {
+  isAuth: boolean;
+  onSignOut: () => void;
   children: React.ReactNode | Array<React.ReactNode>;
 };
 
-const Layout = ({ children }: Props) => {
+const Layout = ({ isAuth, onSignOut, children }: Props) => {
   const router = useRouter();
-  const { user, onSignOut } = useAuth();
 
   return (
     <div>
@@ -19,7 +19,7 @@ const Layout = ({ children }: Props) => {
           <Link href="/protected">🔒 Página Protegida</Link>
         </div>
         <div>
-          {user ? (
+          {isAuth ? (
             <button type="button" onClick={onSignOut}>
               Cerrar sesión
             </button>

@@ -4,10 +4,10 @@ import withUser from 'hocs/withUser';
 import { useAuth } from 'contexts/AuthContext';
 
 const LoginPage: NextPage = () => {
-  const { onSignIn } = useAuth();
+  const { user, onSignOut, onSignIn } = useAuth();
 
   return (
-    <Layout>
+    <Layout isAuth={!!user} onSignOut={onSignOut}>
       <div>
         <button type="button" onClick={onSignIn}>
           Loguearse con Google
