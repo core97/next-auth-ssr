@@ -15,6 +15,6 @@ const LoginPage: NextPage = () => {
       </div>
     </Layout>
   );
-} 
+};
 
 export default withUser(LoginPage);
