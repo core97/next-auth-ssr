@@ -1,5 +1,11 @@
 import { useRouter } from 'next/router';
-import { useContext, useState, useEffect, createContext } from 'react';
+import {
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+  createContext,
+} from 'react';
 import nookies from 'nookies';
 import { getAuth } from 'firebase/auth';
 import {
@@ -10,7 +16,7 @@ import {
 import { User } from 'types/bussines';
 import { AuthContextValues } from 'types/app';
 
-export const authContextDefaultValues = {
+export const authContextDefaultValues: AuthContextValues = {
   user: undefined,
   onChangeUser: () => {},
   onSignIn: () => {},
@@ -29,21 +35,21 @@ export function AuthHelperContextProvider({
   const [user, setUser] = useState<User | undefined>(undefined);
   const router = useRouter();
 
-  const handleOnChangeUser = (uid: string, email: string) => {
+  const handleOnChangeUser = useCallback((uid: string, email: string) => {
     setUser({ uid, email });
-  };
+  }, []);
 
-  const handleOnSignIn = async () => {
+  const handleOnSignIn = useCallback(async () => {
     const { uid, email } = await signInWithGoogle();
     handleOnChangeUser(uid, email);
     router.push('/');
-  };
+  }, [handleOnChangeUser, router]);
 
-  const handleOnSignOut = async () => {
+  const handleOnSignOut = useCallback(async () => {
     await signOut();
     setUser(undefined);
     router.push('/');
-  };
+  }, [router]);
 
   useEffect(() => {
     onIdTokenChanged(async changedUser => {
