@@ -1,9 +1,8 @@
 import { useContext, createContext } from 'react';
-import { authContextDefaultValues } from 'contexts/AuthHelperContext';
 import { AuthContextValues } from 'types/app';
 
-export const AuthContext = createContext<AuthContextValues>(
-  authContextDefaultValues
+export const AuthContext = createContext<AuthContextValues | undefined>(
+  undefined
 );
 
 export function useAuth() {

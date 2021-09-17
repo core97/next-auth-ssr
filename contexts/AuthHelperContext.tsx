@@ -16,15 +16,8 @@ import {
 import { User } from 'types/bussines';
 import { AuthContextValues } from 'types/app';
 
-export const authContextDefaultValues: AuthContextValues = {
-  user: undefined,
-  onChangeUser: () => {},
-  onSignIn: () => {},
-  onSignOut: () => {},
-};
-
-export const AuthHelperContext = createContext<AuthContextValues>(
-  authContextDefaultValues
+export const AuthHelperContext = createContext<AuthContextValues | undefined>(
+  undefined
 );
 
 export function AuthHelperContextProvider({
