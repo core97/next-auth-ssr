@@ -1,16 +1,18 @@
 import type { NextPage } from 'next';
-import Layout from 'components/Layout';
-import withUser from 'hocs/withUser';
+import { useAuth } from 'contexts/AuthContext';
 
-const HomePage: NextPage = () => (
-  <Layout>
+const HomePage: NextPage = () => {
+  const { user } = useAuth();
+
+  return (
     <div>
       <h1>
         Next.js Auth SSR
         <br /> with 🔥Firebase
       </h1>
+      {user && <h3>Hello {user?.email} 🖖</h3>}
     </div>
-  </Layout>
-);
+  );
+};
 
-export default withUser(HomePage);
+export default HomePage;
