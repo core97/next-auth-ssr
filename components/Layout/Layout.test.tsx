@@ -1,72 +1,65 @@
 import { render, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
+import { useAuth, AuthContextValues } from 'contexts/AuthContext';
 import Layout from './index';
 
+jest.mock('contexts/AuthContext');
+
 describe('<Layout />', () => {
+  beforeEach(() => {});
+
   test('renders its children', () => {
-    const props = {
-      text: 'This is a test',
-      isAuth: true,
-      onSignOutSpy: jest.fn(),
-    };
+    (useAuth as jest.Mock<AuthContextValues>).mockImplementation(() => ({
+      user: undefined,
+      onChangeUser: jest.fn(),
+      onSignIn: jest.fn(),
+      onSignOut: jest.fn(),
+    }));
 
     const component = render(
-      <Layout isAuth={props.isAuth} onSignOut={props.onSignOutSpy}>
-        <p>{props.text}</p>
+      <Layout>
+        <p>This is a text</p>
       </Layout>
     );
-
-    expect(component.container).toHaveTextContent(props.text);
+    expect(component.container).toHaveTextContent('This is a text');
   });
 
-  test('shows sign in button', () => {
-    const props = {
-      text: 'This is a test',
-      isAuth: false,
-      onSignOutSpy: jest.fn(),
-    };
+  test('shows sign in button when user is not logged', () => {
+    (useAuth as jest.Mock<AuthContextValues>).mockImplementation(() => ({
+      user: undefined,
+      onChangeUser: jest.fn(),
+      onSignIn: jest.fn(),
+      onSignOut: jest.fn(),
+    }));
 
     const component = render(
-      <Layout isAuth={props.isAuth} onSignOut={props.onSignOutSpy}>
-        <p>{props.text}</p>
+      <Layout>
+        <p>This is a text</p>
       </Layout>
     );
 
     expect(component.getByText('Iniciar sesión')).toBeDefined();
   });
 
-  test('shows sign out button', () => {
-    const props = {
-      text: 'This is a test',
-      isAuth: true,
-      onSignOutSpy: jest.fn(),
-    };
+  test('click sign out button calls onSignOut handler once', () => {
+    const onSignOutMock = jest.fn();
+
+    (useAuth as jest.Mock<AuthContextValues>).mockImplementation(() => ({
+      user: { email: 'test@gmail.com', uid: '2sfhwofin' },
+      onChangeUser: jest.fn(),
+      onSignIn: jest.fn(),
+      onSignOut: onSignOutMock,
+    }));
 
     const component = render(
-      <Layout isAuth={props.isAuth} onSignOut={props.onSignOutSpy}>
-        <p>{props.text}</p>
-      </Layout>
-    );
-
-    expect(component.getByText('Cerrar sesión')).toBeDefined();
-  });
-
-  test('clicking the button calls event handler once', () => {
-    const props = {
-      text: 'This is a test',
-      isAuth: true,
-      onSignOutSpy: jest.fn(),
-    };
-
-    const component = render(
-      <Layout isAuth={props.isAuth} onSignOut={props.onSignOutSpy}>
-        <p>{props.text}</p>
+      <Layout>
+        <p>This is a text</p>
       </Layout>
     );
 
     const button = component.getByText('Cerrar sesión');
     fireEvent.click(button);
 
-    expect(props.onSignOutSpy).toHaveBeenCalledTimes(1);
+    expect(onSignOutMock).toHaveBeenCalledTimes(1);
   });
 });
