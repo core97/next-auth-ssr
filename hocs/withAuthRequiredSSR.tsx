@@ -1,36 +1,22 @@
 import { GetServerSideProps, GetServerSidePropsContext } from 'next';
 import nookies from 'nookies';
 import firebaseAdmin from 'libs/firebaseAdmin';
-import { User } from 'types/bussines';
 
-export type AuthRequiredPropsSSR = {
-  userFromSSR?: User;
-};
-
-type ReturnedDataSSR = { props: AuthRequiredPropsSSR } | Record<string, any>;
+type ReturnedDataSSR = { props: Record<string, any> } | Record<string, any>;
 
 const withAuthRequiredSSR =
-  (/* Aqui le podemos pasar parámetros */) =>
   (getServerSidePropsFunc?: GetServerSideProps) =>
   async (ctx: GetServerSidePropsContext) => {
     let returnedData: ReturnedDataSSR = { props: {} };
 
     try {
       const cookies = nookies.get(ctx);
-      const { token, hasUser: hasUserDetailsInClientApp } = cookies;
-      const decodedToken = await firebaseAdmin.auth().verifyIdToken(token);
+      const { token } = cookies;
 
-      const { uid, email } = decodedToken;
-
-      if (!hasUserDetailsInClientApp) {
-        // Recuperar aquí todos los detalles del usuario
-      }
-
-      returnedData = { props: { userFromSSR: { uid, email } } };
-      nookies.set(undefined, 'hasUser', JSON.stringify(true));
+      await firebaseAdmin.auth().verifyIdToken(token);
 
       if (getServerSidePropsFunc) {
-        const composedProps = (await getServerSidePropsFunc(ctx)) || {};
+        const composedProps: any = (await getServerSidePropsFunc(ctx)) || {};
 
         if (composedProps) {
           if (composedProps.props) {

@@ -8,8 +8,8 @@ type Props = {
 };
 
 const Layout = ({ children }: Props) => {
-  const router = useRouter();
   const { user, onSignOut } = useAuth();
+  const router = useRouter();
 
   return (
     <div>
